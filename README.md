@@ -20,7 +20,16 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+### Getting information about an Instagram account
+
+  ```ruby
+    require 'ig_scrape'
+
+    client = IGScrape::Client.new("username")
+    puts client.follower_count
+    puts client.follows_count
+    pust client.post_count
+  ```
 
 ## Development
 
