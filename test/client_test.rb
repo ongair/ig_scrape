@@ -1,11 +1,5 @@
 require "test_helper"
 
-# class ClientTest < Minitest::Test
-#
-#   test 'can create an instagram client' do
-#   end
-# end
-
 describe "Clients" do
 
   it "Can create an instagram client" do
