@@ -5,7 +5,7 @@ require "ig_scrape/version"
 
 Gem::Specification.new do |spec|
   spec.name          = "ig_scrape"
-  spec.version       = IgScrape::VERSION
+  spec.version       = IGScrape::VERSION
   spec.authors       = ["Trevor Kimenye"]
   spec.email         = ["kimenye@gmail.com"]
 
