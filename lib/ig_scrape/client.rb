@@ -1,7 +1,7 @@
 require 'httparty'
 class IGScrape::Client
 
-  attr_accessor :username, :full_name, :follower_count, :follows_count, :id ,:post_count
+  attr_accessor :username, :full_name, :follower_count, :follows_count, :id ,:post_count, :profile_pic_url
 
   def initialize(username)
     @username = username
@@ -21,5 +21,6 @@ class IGScrape::Client
       @follows_count = user["follows"]["count"]
       @id = user["id"]
       @post_count = user["media"]["count"]
+      @profile_pic_url = user["profile_pic_url"]
     end
 end

@@ -20,6 +20,7 @@ describe "Clients" do
             count: 100
           },
           id: "12345",
+          profile_pic_url: "https://instagram.fnbo3-1.fna.fbcdn.net/12345.jpg",
           follows: {
             count: 50
           },
@@ -36,6 +37,7 @@ describe "Clients" do
     assert_equal client.follows_count, 50
     assert_equal client.id, "12345"
     assert_equal client.post_count, 200
+    assert_equal client.profile_pic_url, "https://instagram.fnbo3-1.fna.fbcdn.net/12345.jpg"
     assert_requested stub
   end
 end
