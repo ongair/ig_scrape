@@ -1,11 +1,20 @@
 require 'httparty'
+
 class IGScrape::Client
 
-  attr_accessor :username, :full_name, :follower_count, :follows_count, :id ,:post_count, :profile_pic_url
+  attr_accessor :username, :full_name, :follower_count, :follows_count, :id ,:post_count, :profile_pic_url, :posts
 
   def initialize(username)
     @username = username
+    @posts = []
     load_profile
+  end
+
+  # def posts
+  # end
+
+  def has_more_posts?
+    @posts.length < @post_count
   end
 
   private
@@ -22,5 +31,13 @@ class IGScrape::Client
       @id = user["id"]
       @post_count = user["media"]["count"]
       @profile_pic_url = user["profile_pic_url"]
+
+      media = user["media"]["nodes"]
+      if media
+        @posts = media.collect do |node|
+          IGScrape::Post.new(node)
+        end
+      end
     end
+
 end

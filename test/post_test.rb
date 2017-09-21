@@ -4,16 +4,17 @@ describe "Posts" do
 
   it "Can create a post from payload" do
     payload = {
-      id: "12345",
-      is_video: false,
-      code: "54321",
-      display_src: "https://instagram.cdn/54321.jpg",
-      caption: "Hello world",
-      comments: {
-        count: 2
+      "id" => "12345",
+      "is_video" => false,
+      "code" => "54321",
+      "display_src" => "https://instagram.cdn/54321.jpg",
+      "caption" => "Hello world",
+      "date" => 1505914786,
+      "comments" => {
+        "count" => 2
       },
-      likes: {
-        count: 10
+      "likes" => {
+        "count" => 10
       }
     }
 
@@ -25,6 +26,7 @@ describe "Posts" do
     assert_equal post.code, "54321"
     assert_equal post.caption, "Hello world"
     assert_equal post.comment_count, 2
+    assert_equal post.created_at, 1505914786
     assert_equal post.likes, 10
   end
 
