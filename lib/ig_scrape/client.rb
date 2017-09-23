@@ -17,6 +17,10 @@ class IGScrape::Client
     @posts.length < @post_count
   end
 
+  def loaded_post_count
+    @posts.length
+  end
+
   private
 
     def load_profile
