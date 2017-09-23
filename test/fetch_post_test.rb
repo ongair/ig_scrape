@@ -78,9 +78,10 @@ describe "Can fetch posts" do
           },
           media: {
             nodes: posts,
-            count: 20,
+            count: 13,
             page_info: {
-              has_next_page: true
+              has_next_page: true,
+              end_cursor: "123457890"
             }
           }
         }
@@ -91,5 +92,37 @@ describe "Can fetch posts" do
     assert_requested stub
     assert client.has_more_posts?
     assert_equal client.loaded_post_count, 12
+
+
+    variables = URI.encode_www_form_component("{\"id\":\"12345\",\"first\":12,\"after\":\"123457890\"}")
+
+    next_url = "https://www.instagram.com/graphql/query/?query_id=17888483320059182&variables=#{variables}"
+    next_stub = stub_request(:get, next_url)
+      .to_return(status: 200, body: {
+        data: {
+          user: {
+            edge_owner_to_timeline_media: {
+              page_info: {
+                has_next_page: false
+              },
+              edges: [
+                {
+                  node: {
+                    id: '12345',
+                    edge_media_to_caption: { edges: [ { node: { text: "Caption" } } ]},
+                    edge_media_to_comment: { count: 5 },
+                    edge_media_preview_like: { count: 5 },
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }.to_json
+    )
+
+    client.load
+    assert !client.has_more_posts?
+    assert_requested next_stub
   end
 end

@@ -14,7 +14,7 @@ class IGScrape::Post
       "is_video" => node["is_video"],
       "code" => node["shortcode"],
       "display_src" => node["display_url"],
-      "caption" => node["edge_media_to_caption"]["edges"].first["node"]["text"],
+      "caption" => (node["edge_media_to_caption"]["edges"].length > 0 ? node["edge_media_to_caption"]["edges"].first["node"]["text"] : ""),
       "date" => node["taken_at_timestamp"],
       "comments" => node["edge_media_to_comment"],
       "likes" => node["edge_media_preview_like"]

@@ -10,8 +10,11 @@ class IGScrape::Client
     load_profile
   end
 
-  # def posts
-  # end
+  def load
+    while has_more_posts? do
+      load_more_posts
+    end
+  end
 
   def has_more_posts?
     @posts.length < @post_count
@@ -34,6 +37,7 @@ class IGScrape::Client
       @follows_count = user["follows"]["count"]
       @id = user["id"]
       @post_count = user["media"]["count"]
+      @page_info = user["media"]["page_info"]
       @profile_pic_url = user["profile_pic_url"]
 
       media = user["media"]["nodes"]
@@ -42,6 +46,23 @@ class IGScrape::Client
           IGScrape::Post.new(node)
         end
       end
+    end
+
+    def load_more_posts
+      cursor = @page_info["end_cursor"]
+
+      variables = URI.encode_www_form_component("{\"id\":\"#{@id}\",\"first\":12,\"after\":\"#{cursor}\"}")
+      url = "https://www.instagram.com/graphql/query/?query_id=17888483320059182&variables=#{variables}"
+
+      resp = HTTParty.get(url)
+      response = JSON.parse(resp.body)
+      timeline = response["data"]["user"]["edge_owner_to_timeline_media"]
+      @page_info = timeline["page_info"]
+      new_posts = timeline["edges"].collect do |edge|
+        IGScrape::Post.new(IGScrape::Post.edge_timeline_to_payload(edge))
+      end
+
+      @posts = @posts.concat(new_posts)
     end
 
 end
