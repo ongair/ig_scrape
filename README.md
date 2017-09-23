@@ -28,7 +28,17 @@ Or install it yourself as:
     client = IGScrape::Client.new("username")
     puts client.follower_count
     puts client.follows_count
-    pust client.post_count
+    puts client.post_count
+  ```
+
+### Loading all the posts for an instagram account  
+
+  ```ruby
+    require 'ig_scrape'
+    client = IGScrape::Client.new("username")
+    client.load
+
+    puts client.posts.length == client.post_count
   ```
 
 ## Development
