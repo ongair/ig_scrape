@@ -32,13 +32,13 @@ describe "Posts" do
 
   it "can create a comment from the payload" do
     payload = {
-      id: "1234",
-      text: "Hi",
-      created_at: 1505915455,
-      owner: {
-        id: "12345",
-        profile_pic_url: "https://instagram.com/a.jpg",
-        username: "claudinhamarm"
+      "id" => "1234",
+      "text" => "Hi",
+      "created_at" => 1505915455,
+      "owner" => {
+        "id" => "12345",
+        "profile_pic_url" => "https://instagram.com/a.jpg",
+        "username" => "claudinhamarm"
       }
     }
 
@@ -95,6 +95,131 @@ describe "Posts" do
       }
     }
 
-    assert_equal IGScrape::Post.edge_timeline_to_payload(edge_payload), payload
+    assert_equal IGScrape::Post.edge_timeline_to_payload(edge_payload["node"]), payload
+  end
+
+  it "Can load a post from the shortcode" do
+
+    code = "BZTc6zHloW8"
+    stub = stub_request(:get, "https://www.instagram.com/p/#{code}/?__a=1")
+      .to_return(status: 200, body: {
+        graphql: {
+          shortcode_media: {
+            id: '123',
+            shortcode: code,
+            display_url: "https://instagram.fbcdn.net/123.jpg",
+            edge_media_to_caption: { edges: [ { node: { text: "Caption" } } ]},
+            edge_media_to_comment: {
+              count: 1,
+              page_info: {
+                has_next_page: false,
+                end_cursor: nil,
+              },
+              edges: [
+                {
+                  node: {
+                    id: "54321",
+                    text: "Do you have no 3",
+                    created_at: 1505998980,
+                    owner: {
+                      id: "67890",
+                      profile_pic_url: "https://instagram.net/67890.jpg",
+                      username: "rosem123"
+                    }
+                  }
+                }
+              ]
+            },
+            edge_media_preview_like: { count: 5 }
+          }
+        }
+      }.to_json
+    )
+
+    post = IGScrape::Post.load_from_shortcode(code)
+    assert_requested stub
+    assert_equal post.code, code
+    assert_equal post.comment_count, post.comments.count
+
+  end
+
+  it "Can load more comments for a post" do
+    code = "BZTc6zHloW8"
+    cursor = "cursor"
+    post_stub = stub_request(:get, "https://www.instagram.com/p/#{code}/?__a=1")
+      .to_return(status: 200, body: {
+        graphql: {
+          shortcode_media: {
+            id: '123',
+            shortcode: code,
+            display_url: "https://instagram.fbcdn.net/123.jpg",
+            edge_media_to_caption: { edges: [ { node: { text: "Caption" } } ]},
+            edge_media_to_comment: {
+              count: 2,
+              page_info: {
+                has_next_page: true,
+                end_cursor: cursor,
+              },
+              edges: [
+                {
+                  node: {
+                    id: "54321",
+                    text: "Do you have no 3",
+                    created_at: 1505998980,
+                    owner: {
+                      id: "67890",
+                      profile_pic_url: "https://instagram.net/67890.jpg",
+                      username: "rosem123"
+                    }
+                  }
+                }
+              ]
+            },
+            edge_media_preview_like: { count: 5 }
+          }
+        }
+      }.to_json
+    )
+
+    variables = URI.encode_www_form_component("{\"shortcode\":\"#{code}\",\"first\":20,\"after\":\"#{cursor}\"}")
+    url = "https://www.instagram.com/graphql/query/?query_id=17852405266163336&variables=#{variables}"
+
+    more_stub = stub_request(:get, url)
+      .to_return(status: 200, body: {
+        data: {
+          shortcode_media: {
+            edge_media_to_comment: {
+              count: 2,
+              page_info: {
+                has_next_page: false,
+                end_cursor: nil
+              },
+              edges: [
+                {
+                  node: {
+                    id: "12345",
+                    text: "Do you have no 4",
+                    created_at: 1505998981,
+                    owner: {
+                      id: "67891",
+                      profile_pic_url: "https://instagram.net/67890.jpg",
+                      username: "rosem321"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }.to_json
+    )
+
+    post = IGScrape::Post.load_from_shortcode(code)
+    assert_requested post_stub
+    assert post.has_more_comments?
+
+    post.load_comments
+    assert_requested more_stub
+    assert !post.has_more_comments?
   end
 end

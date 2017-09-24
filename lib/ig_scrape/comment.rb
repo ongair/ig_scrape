@@ -9,11 +9,11 @@ class IGScrape::Comment
   private
 
     def load_from_payload payload
-      @id = payload[:id]
-      @text = payload[:text]
-      @created_at = payload[:created_at]
-      @author_id = payload[:owner][:id]
-      @author_profile_pic = payload[:owner][:profile_pic_url]
-      @author_name = payload[:owner][:username]
+      @id = payload["id"]
+      @text = payload["text"]
+      @created_at = payload["created_at"]
+      @author_id = payload["owner"]["id"]
+      @author_profile_pic = payload["owner"]["profile_pic_url"]
+      @author_name = payload["owner"]["username"]
     end
 end
