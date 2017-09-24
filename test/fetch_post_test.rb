@@ -111,7 +111,7 @@ describe "Can fetch posts" do
                     id: '12345',
                     edge_media_to_caption: { edges: [ { node: { text: "Caption" } } ]},
                     edge_media_to_comment: { count: 5 },
-                    edge_media_preview_like: { count: 5 },
+                    edge_media_preview_like: { count: 5 }
                   }
                 }
               ]

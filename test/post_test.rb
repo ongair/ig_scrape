@@ -95,6 +95,29 @@ describe "Posts" do
       }
     }
 
-    assert_equal IGScrape::Post.edge_timeline_to_payload(edge_payload), payload
+    assert_equal IGScrape::Post.edge_timeline_to_payload(edge_payload["node"]), payload
+  end
+
+  it "Can load a post from the shortcode" do
+
+    code = "BZTc6zHloW8"
+    stub = stub_request(:get, "https://www.instagram.com/p/#{code}/?__a=1")
+      .to_return(status: 200, body: {
+        graphql: {
+          shortcode_media: {
+            id: '123',
+            shortcode: code,
+            display_url: "https://instagram.fbcdn.net/123.jpg",
+            edge_media_to_caption: { edges: [ { node: { text: "Caption" } } ]},
+            edge_media_to_comment: { count: 5 },
+            edge_media_preview_like: { count: 5 }
+          }
+        }
+      }.to_json
+    )
+
+    post = IGScrape::Post.load_from_shortcode(code)
+    assert_requested stub
+    # assert_equal post.code, code
   end
 end

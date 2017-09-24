@@ -6,8 +6,17 @@ class IGScrape::Post
     load_from_payload(payload)
   end
 
-  def self.edge_timeline_to_payload edge_payload
-    node = edge_payload["node"]
+  def self.load_from_shortcode code
+    url = "https://www.instagram.com/p/#{code}/?__a=1"
+    resp = HTTParty.get(url)
+    response = JSON.parse(resp.body)
+    payload = response["graphql"]["shortcode_media"]
+
+    post = IGScrape::Post.new(self.edge_timeline_to_payload(payload))
+  end
+
+  def self.edge_timeline_to_payload node
+    # node = edge_payload["node"]
     {
       "id" => node["id"],
       "__typename" => node["__typename"],

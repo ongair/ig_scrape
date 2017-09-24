@@ -59,7 +59,7 @@ class IGScrape::Client
       timeline = response["data"]["user"]["edge_owner_to_timeline_media"]
       @page_info = timeline["page_info"]
       new_posts = timeline["edges"].collect do |edge|
-        IGScrape::Post.new(IGScrape::Post.edge_timeline_to_payload(edge))
+        IGScrape::Post.new(IGScrape::Post.edge_timeline_to_payload(edge["node"]))
       end
 
       @posts = @posts.concat(new_posts)
