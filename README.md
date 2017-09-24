@@ -41,6 +41,19 @@ Or install it yourself as:
     puts client.posts.length == client.post_count
   ```
 
+### Loading a post
+
+  ```ruby
+    require 'ig_scrape'
+    code = "KVHudYDs"
+    post = IGScrape::Post.load_from_shortcode(code)
+    puts post.comment_count
+    puts post.has_more_comments?
+
+    post.load_more_comments
+    puts post.has_more_comments?
+  ```
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake test` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
