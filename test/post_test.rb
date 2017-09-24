@@ -32,13 +32,13 @@ describe "Posts" do
 
   it "can create a comment from the payload" do
     payload = {
-      id: "1234",
-      text: "Hi",
-      created_at: 1505915455,
-      owner: {
-        id: "12345",
-        profile_pic_url: "https://instagram.com/a.jpg",
-        username: "claudinhamarm"
+      "id" => "1234",
+      "text" => "Hi",
+      "created_at" => 1505915455,
+      "owner" => {
+        "id" => "12345",
+        "profile_pic_url" => "https://instagram.com/a.jpg",
+        "username" => "claudinhamarm"
       }
     }
 
@@ -109,7 +109,27 @@ describe "Posts" do
             shortcode: code,
             display_url: "https://instagram.fbcdn.net/123.jpg",
             edge_media_to_caption: { edges: [ { node: { text: "Caption" } } ]},
-            edge_media_to_comment: { count: 5 },
+            edge_media_to_comment: {
+              count: 1,
+              page_info: {
+                has_next_page: false,
+                end_cursor: nil,
+              },
+              edges: [
+                {
+                  node: {
+                    id: "54321",
+                    text: "Do you have no 3",
+                    created_at: 1505998980,
+                    owner: {
+                      id: "67890",
+                      profile_pic_url: "https://instagram.net/67890.jpg",
+                      username: "rosem123"
+                    }
+                  }
+                }
+              ]
+            },
             edge_media_preview_like: { count: 5 }
           }
         }
@@ -118,6 +138,8 @@ describe "Posts" do
 
     post = IGScrape::Post.load_from_shortcode(code)
     assert_requested stub
-    # assert_equal post.code, code
+    assert_equal post.code, code
+    assert_equal post.comment_count, post.comments.count
+
   end
 end

@@ -1,8 +1,9 @@
 class IGScrape::Post
 
-  attr_accessor :id, :comment_count, :likes, :is_video, :code, :display_src, :caption, :created_at, :type
+  attr_accessor :id, :comment_count, :likes, :is_video, :code, :display_src, :caption, :created_at, :type, :comments
 
   def initialize payload
+    @comments = []
     load_from_payload(payload)
   end
 
@@ -16,7 +17,6 @@ class IGScrape::Post
   end
 
   def self.edge_timeline_to_payload node
-    # node = edge_payload["node"]
     {
       "id" => node["id"],
       "__typename" => node["__typename"],
@@ -41,5 +41,12 @@ class IGScrape::Post
       @code = payload["code"]
       @likes = payload["likes"]["count"]
       @comment_count = payload["comments"]["count"]
+
+      # load comments
+      if payload["comments"]["edges"]
+        @comments = payload["comments"]["edges"].collect do |edge|
+          IGScrape::Comment.new(edge["node"])
+        end
+      end
     end
 end
