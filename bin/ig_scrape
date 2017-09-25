@@ -1,0 +1,4 @@
+#!/usr/bin/env ruby
+
+require 'ig_scrape'
+puts ARGV[0]

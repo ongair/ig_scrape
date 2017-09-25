@@ -8,6 +8,7 @@ Gem::Specification.new do |spec|
   spec.version       = IGScrape::VERSION
   spec.authors       = ["Trevor Kimenye"]
   spec.email         = ["kimenye@gmail.com"]
+  spec.executables   << 'ig_scrape'
 
   spec.summary       = %q{A gem to scrape instagram posts and comments}
   spec.description   = %q{A gem to scrape instagram posts and comments.}
