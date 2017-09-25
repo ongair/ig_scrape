@@ -30,21 +30,27 @@ class IGScrape::Client
       url = "https://www.instagram.com/#{@username}/?__a=1"
       resp = HTTParty.get(url)
 
-      response = JSON.parse(resp.body)
-      user = response["user"]
-      @full_name = user["full_name"]
-      @follower_count = user["followed_by"]["count"]
-      @follows_count = user["follows"]["count"]
-      @id = user["id"]
-      @post_count = user["media"]["count"]
-      @page_info = user["media"]["page_info"]
-      @profile_pic_url = user["profile_pic_url"]
+      case resp.code
+        when 200
+          response = JSON.parse(resp.body)
+          user = response["user"]
+          @full_name = user["full_name"]
+          @follower_count = user["followed_by"]["count"]
+          @follows_count = user["follows"]["count"]
+          @id = user["id"]
+          @post_count = user["media"]["count"]
+          @page_info = user["media"]["page_info"]
+          @profile_pic_url = user["profile_pic_url"]
 
-      media = user["media"]["nodes"]
-      if media
-        @posts = media.collect do |node|
-          IGScrape::Post.new(node)
-        end
+          media = user["media"]["nodes"]
+          if media
+            @posts = media.collect do |node|
+              IGScrape::Post.new(node)
+            end
+          end
+        when 404
+          # the client does not exist
+          raise ArgumentError.new("#{@username} does not exist!")
       end
     end
 
