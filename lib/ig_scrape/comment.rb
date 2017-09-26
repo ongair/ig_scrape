@@ -6,6 +6,17 @@ class IGScrape::Comment
     load_from_payload(payload)
   end
 
+  def to_json(*args)
+    JSON.generate({
+      id: @id,
+      text: @text,
+      created_at: @created_at,
+      author_id: @author_id,
+      author_name: @author_name,
+      author_profile_pic: @author_profile_pic
+    })
+  end
+
   private
 
     def load_from_payload payload
