@@ -6,7 +6,7 @@ require 'json'
 
 class IGScrape::CLI < Thor
 
-  desc "posts username", "Get all the posts for the username"
+  desc "posts", "Get all the posts for the username"
   option :username, :required => true
   def posts
     begin
@@ -19,7 +19,7 @@ class IGScrape::CLI < Thor
     end
   end
 
-  desc "comments shortcode", "Get all the comments for a post's shortcode"
+  desc "comments", "Get all the comments for a post's shortcode"
   option :shortcode, :required => true
   def comments
     begin
