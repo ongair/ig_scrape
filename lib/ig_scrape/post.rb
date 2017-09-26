@@ -1,3 +1,4 @@
+require 'json'
 class IGScrape::Post
 
   attr_accessor :id, :comment_count, :likes, :is_video, :code, :display_src, :caption, :created_at, :type, :comments
@@ -38,6 +39,18 @@ class IGScrape::Post
       "comments" => node["edge_media_to_comment"],
       "likes" => node["edge_media_preview_like"]
     }
+  end
+
+  def to_json(*args)
+    JSON.generate({
+      id: @id,
+      code: @code,
+      caption: @caption,
+      type: @type,
+      created_at: @created_at,
+      comment_count: @comment_count,
+      likes: @likes
+    })
   end
 
   private

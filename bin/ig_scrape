@@ -1,4 +1,23 @@
 #!/usr/bin/env ruby
 
 require 'ig_scrape'
-puts ARGV[0]
+require 'thor'
+require 'json'
+
+class IGScrape::CLI < Thor
+
+  desc "posts username", "Get all the posts for the username"
+  option :username, :required => true
+  def posts
+    begin
+      client = IGScrape::Client.new(options[:username])
+      posts = client.posts
+      puts JSON.pretty_generate(posts)
+    rescue ArgumentError => e
+      puts e.message
+    end
+  end
+
+end
+
+IGScrape::CLI.start(ARGV)
