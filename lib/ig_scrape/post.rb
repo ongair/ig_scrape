@@ -1,3 +1,4 @@
+require 'json'
 class IGScrape::Post
 
   attr_accessor :id, :comment_count, :likes, :is_video, :code, :display_src, :caption, :created_at, :type, :comments
@@ -10,10 +11,16 @@ class IGScrape::Post
   def self.load_from_shortcode code
     url = "https://www.instagram.com/p/#{code}/?__a=1"
     resp = HTTParty.get(url)
-    response = JSON.parse(resp.body)
-    payload = response["graphql"]["shortcode_media"]
 
-    post = IGScrape::Post.new(self.edge_timeline_to_payload(payload))
+    case resp.code
+      when 200
+        response = JSON.parse(resp.body)
+        payload = response["graphql"]["shortcode_media"]
+
+        post = IGScrape::Post.new(self.edge_timeline_to_payload(payload))
+      when 404
+        raise ArgumentError.new("Post with #{code} does not exist!")
+    end
   end
 
   def has_more_comments?
@@ -38,6 +45,18 @@ class IGScrape::Post
       "comments" => node["edge_media_to_comment"],
       "likes" => node["edge_media_preview_like"]
     }
+  end
+
+  def to_json(*args)
+    JSON.generate({
+      id: @id,
+      code: @code,
+      caption: @caption,
+      type: @type,
+      created_at: @created_at,
+      comment_count: @comment_count,
+      likes: @likes
+    })
   end
 
   private

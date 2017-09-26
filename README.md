@@ -54,6 +54,22 @@ Or install it yourself as:
     puts post.has_more_comments?
   ```
 
+### Using the CLI
+
+  You can use the CLI to get a dump in JSON of posts and comments
+
+  ```
+    gem install ig_scrape
+
+    ig_scrape help
+
+    # load all the posts for an account
+    ig_scrape posts --username theusername
+
+    # load all the comments for a post
+    ig_scrape comments --shortcode theshortcode
+  ```
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake test` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.

@@ -140,6 +140,19 @@ describe "Posts" do
     assert_requested stub
     assert_equal post.code, code
     assert_equal post.comment_count, post.comments.count
+  end
+
+  it 'Can throw an error if a post does not exist' do
+    code = "blank"
+    stub = stub_request(:get, "https://www.instagram.com/p/#{code}/?__a=1")
+      .to_return(status: 404, body: {
+      }.to_json
+    )
+
+    assert_raises ArgumentError do
+      post = IGScrape::Post.load_from_shortcode(code)
+      assert_requested stub
+    end
 
   end
 

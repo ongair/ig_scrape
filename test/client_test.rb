@@ -34,4 +34,18 @@ describe "Clients" do
     assert_equal client.profile_pic_url, "https://instagram.fnbo3-1.fna.fbcdn.net/12345.jpg"
     assert_requested stub
   end
+
+  it "Can throw an error if a user does not exist" do
+    username = "non_existent"
+
+    stub = stub_request(:get, "https://www.instagram.com/#{username}/?__a=1")
+      .to_return(status: 404, body: {
+      }.to_json
+    )
+
+    assert_raises ArgumentError do
+      client = IGScrape::Client.new(username)
+      assert_requested stub
+    end
+  end
 end
