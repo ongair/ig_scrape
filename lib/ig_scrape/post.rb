@@ -11,10 +11,16 @@ class IGScrape::Post
   def self.load_from_shortcode code
     url = "https://www.instagram.com/p/#{code}/?__a=1"
     resp = HTTParty.get(url)
-    response = JSON.parse(resp.body)
-    payload = response["graphql"]["shortcode_media"]
 
-    post = IGScrape::Post.new(self.edge_timeline_to_payload(payload))
+    case resp.code
+      when 200
+        response = JSON.parse(resp.body)
+        payload = response["graphql"]["shortcode_media"]
+
+        post = IGScrape::Post.new(self.edge_timeline_to_payload(payload))
+      when 404
+        raise ArgumentError.new("Post with #{code} does not exist!")
+    end
   end
 
   def has_more_comments?
